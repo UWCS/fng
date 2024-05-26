@@ -10,7 +10,7 @@ mkdir -p "/var/tmp/$USER"
 podman stop -t 0 arch
 podman rm -f arch
 
-$distrobox create --nvidia -i ghcr.io/alexwright1324/fng:latest -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#:/run/host/#d' | tr '\n' ' ' | source /dev/stdin
+$distrobox create --nvidia -i ghcr.io/alexwright1324/fng:latest -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ' | source /dev/stdin
 
 podman start arch
 podman exec --interactive --detach-keys="" --user=$USER --workdir="/home/fng" --env "CONTAINER_ID=arch" --env "DISPLAY=${DISPLAY}" --env "HOME=/home/fng" arch dbus-run-session startplasma-x11
