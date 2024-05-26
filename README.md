@@ -25,3 +25,12 @@ The installer script sets up the following components on your host:
 ### Image
 
 The container image is based on Docker's Arch Linux. It includes patched in Nvidia support from the host through Distrobox. SystemD is executed within the container to maintain a sandboxed environment.
+
+The `Dockerfile` handles container building, install system components here.
+
+The image is built via a Github Actions workflow and packaged into GHCR, run the workflow via dispatch trigger to update.
+
+Arbitrary Files can be added to the host image via `system-files`.
+
+`/home/fng` is used as the home directory.
+
