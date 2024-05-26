@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# Install with
 # curl -s https://raw.githubusercontent.com/AlexWright1324/fng/main/install.sh | sh
 
 # Download files
