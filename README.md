@@ -7,7 +7,7 @@ This project provides an isolated, containerized environment for UWCS event Frid
 First install the host requirements onto you user account:
 
 ```sh
-curl -s https://raw.githubusercontent.com/AlexWright1324/fng/main/install.sh | sh
+curl -s https://raw.githubusercontent.com/UWCS/fng/main/install.sh | sh
 ```
 
 Once the installation is complete, start the environment using (Custom Script) on the user login screen (GDM).
