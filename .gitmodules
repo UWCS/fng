@@ -1,0 +1,3 @@
+[submodule "system-files/home/fng"]
+	path = system-files/home/fng
+	url = https://github.com/AlexWright1324/fng-home.git
