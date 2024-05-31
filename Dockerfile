@@ -18,13 +18,11 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
     echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN pacman -Syu \
-        nano git wget fuse3 \
+        nano fuse3 \
         xorg-server vulkan-tools plasma-desktop xdg-desktop-portal-kde \
         plasma-pa kde-gtk-config pkg-config \
         firefox konsole dolphin \
         flatpak \
-        --noconfirm && \
-    pacman -Syu \
         steam lutris \
         --noconfirm
 
@@ -36,7 +34,7 @@ RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -drf paru-bin
-RUN paru --noconfirm -S prismlauncher-bin jre17-openjdk
+RUN paru --noconfirm -S prismlauncher-qt5-bin jre17-openjdk
 USER root
 WORKDIR /
 
