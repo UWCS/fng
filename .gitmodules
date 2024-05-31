@@ -1,3 +1,4 @@
 [submodule "system-files/home/fng"]
 	path = system-files/home/fng
 	url = https://github.com/UWCS/fng-home.git
+	branch = main
