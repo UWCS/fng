@@ -1,7 +1,5 @@
 FROM docker.io/library/archlinux:latest AS arch
 
-COPY system-files /
-
 # Pacman Initialization
 # Create build user
 RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
@@ -24,7 +22,10 @@ RUN pacman -Syu \
         firefox konsole dolphin \
         flatpak \
         steam lutris \
+	cargo \
         --noconfirm
+
+RUN cargo install dcspkg --root /usr
 
 # Add paru and install AUR packages
 USER build
@@ -34,8 +35,14 @@ RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -drf paru-bin
-RUN paru --noconfirm -S prismlauncher-qt5-bin jre17-openjdk
+RUN paru --noconfirm -S prismlauncher-qt5-bin jre17-openjdk jre21-openjdk
 USER root
+WORKDIR /
+
+RUN mkdir -p /home/fng
+WORKDIR /home/fng
+RUN git clone https://github.com/UWCS/fng-home.git .
+RUN git clone https://github.com/UWCS/dcslauncher.git
 WORKDIR /
 
 # Cleanup
