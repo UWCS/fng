@@ -18,7 +18,7 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
 RUN pacman -Syu \
         nano fuse3 \
         xorg-server vulkan-tools plasma-desktop xdg-desktop-portal-kde \
-        plasma-pa kde-gtk-config pkg-config \
+        pulseaudio plasma-pa kde-gtk-config pkg-config \
         firefox konsole dolphin \
         flatpak \
         steam lutris \
