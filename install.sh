@@ -12,18 +12,13 @@ curl "${URL}/host/xstartup" --create-dirs -o "${HOME}/.vnc/xstartup"
 
 # Download distrobox
 # Find the distrobox binary
-# Using a list loop over the possible locations
-for bin in "distrobox" "~/.local/bin/distrobox"
-do
-    output=$(command -v $bin &> /dev/null)
-    if $output
-    then
-        distrobox=$output
-        break
-    fi
-done
-if [ -z "$distrobox" ]
+if command -v distrobox &> /dev/null
 then
+    distrobox=$(which distrobox)
+elif [ -f ~/.local/bin/distrobox ]
+then
+    distrobox=~/.local/bin/distrobox
+else
     echo "Installing distrobox"
     curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --next --prefix ~/.local
 fi

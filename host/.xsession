@@ -11,17 +11,13 @@ fi
 
 # Find the distrobox binary
 # Using a list loop over the possible locations
-for bin in "distrobox" "~/.local/bin/distrobox"
-do
-    output=$(command -v $bin &> /dev/null)
-    if $output
-    then
-        distrobox=$output
-        break
-    fi
-done
-if [ -z "$distrobox" ]
+if command -v distrobox &> /dev/null
 then
+    distrobox=$(which distrobox)
+elif [ -f ~/.local/bin/distrobox ]
+then
+    distrobox=~/.local/bin/distrobox
+else
     echo "distrobox is not installed. Please install distrobox before running this script."
     exit 1
 fi
