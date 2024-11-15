@@ -13,10 +13,10 @@ fi
 # Using a list loop over the possible locations
 for bin in "distrobox" "~/.local/bin/distrobox"
 do
-    if command -v $bin &> /dev/null
+    output=$(command -v $bin &> /dev/null)
+    if $output
     then
-        distrobox=$bin
-        distroboxinit=$bin-init
+        distrobox=$output
         break
     fi
 done
