@@ -19,16 +19,17 @@ RUN pacman -Syu \
         nano fuse3 \
         xorg-server vulkan-tools plasma-desktop xdg-desktop-portal-kde \
         pulseaudio plasma-pa kde-gtk-config pkg-config \
-        firefox konsole dolphin \
+        firefox discover konsole dolphin kate \
         flatpak \
         steam lutris \
+        prismlauncher jre17-openjdk jre21-openjdk \
 	cargo \
         --noconfirm
 
 # Install DCSPkg
 RUN cargo install dcspkg --root /usr
 
-# Add Flathub
+# Add Flathub - Its possible this doesnt work as system-wide flatpak is broken
 RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Add paru and install AUR packages
@@ -39,7 +40,7 @@ RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -drf paru-bin
-RUN paru --noconfirm -S prismlauncher-qt5-bin jre17-openjdk jre21-openjdk
+# RUN paru --noconfirm -S PKGNAME
 USER root
 WORKDIR /
 

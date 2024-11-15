@@ -1,7 +1,8 @@
-# Friday Night Gaming System
+# Friday Night Gaming Container
 
-This project provides an isolated, containerized environment for UWCS event Friday Night Gaming on the department's systems.
+Allows DCS Lab Machines to run games in an isolated container.
 
+Want to play games on your DCS Lab Machine with your own account? See below :)
 ## Usage
 
 First install the host requirements onto you user account:
@@ -10,9 +11,9 @@ First install the host requirements onto you user account:
 curl -s https://raw.githubusercontent.com/UWCS/fng/main/install.sh | sh
 ```
 
-Once the installation is complete, start the environment using (Custom Script) on the user login screen (GDM).
+Once complete, choose "User Script" on the login screen before entering your password.
 
-## Details
+## How it works
 ### Installer
 
 The installer script sets up the following components on your host:
@@ -30,7 +31,8 @@ The `Dockerfile` handles container building, install system components here.
 
 The image is built via a Github Actions workflow and packaged into GHCR, run the workflow via dispatch trigger to update.
 
-Arbitrary Files can be added to the host image via `system-files`.
+## Development
+Run `builddev.sh` to build the container tag `fng:dev`
+Run `rundev.sh` to execute this image using Xephyr on the lab machines
 
-`/home/fng` is used as the home directory.
-
+Requires Xephyr binary installed on lab machines
