@@ -44,9 +44,6 @@ fi
 # OLD:
 # $distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
 
-# This line is required?
-XDG_RUNTIME_DIR=/run/user/$(id -u)
-
 podman create \
     --hostname $(hostname) \
     --name "arch" \
@@ -60,7 +57,7 @@ podman create \
     --env "container=podman" \
     --env "CONTAINER_ID=arch" \
     --volume /tmp:/tmp:rslave \
-    --volume $distroboxinit:/usr/bin/entrypoint:ro \
+    --volume $distrobox-init:/usr/bin/entrypoint:ro \
     --volume /:/run/host/:rslave \
     --volume /dev:/dev:rslave \
     --volume /sys:/sys:rslave \
