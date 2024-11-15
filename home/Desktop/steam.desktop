@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment=
+Comment=
+Exec=/usr/bin/steam %U
+GenericName=
+GenericName=
+Icon=steam
+MimeType=
+Name=Steam
+Name=Steam
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

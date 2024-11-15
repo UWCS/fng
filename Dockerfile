@@ -25,7 +25,11 @@ RUN pacman -Syu \
 	cargo \
         --noconfirm
 
+# Install DCSPkg
 RUN cargo install dcspkg --root /usr
+
+# Add Flathub
+RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Add paru and install AUR packages
 USER build
@@ -39,9 +43,10 @@ RUN paru --noconfirm -S prismlauncher-qt5-bin jre17-openjdk jre21-openjdk
 USER root
 WORKDIR /
 
+# Create home directory
 RUN mkdir -p /home/fng
 WORKDIR /home/fng
-RUN git clone https://github.com/UWCS/fng-home.git .
+COPY home ./
 RUN git clone https://github.com/UWCS/dcslauncher.git
 WORKDIR /
 

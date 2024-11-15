@@ -1,0 +1,10 @@
+/.cache
+/.bash_history
+/.mozilla
+/.steam
+/.local/share
+/.dcspkg
+/.config/pulse
+
+# Repos
+/dcslauncher
