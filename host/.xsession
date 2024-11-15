@@ -44,8 +44,11 @@ fi
 # OLD:
 # $distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
 
+# This line is required?
+XDG_RUNTIME_DIR=/run/user/$(id -u)
+
 podman create \
-    --hostname "coalab-41" \
+    --hostname $(hostname) \
     --name "arch" \
     --privileged --security-opt label=disable --security-opt apparmor=unconfined \
     --pids-limit=-1 \
