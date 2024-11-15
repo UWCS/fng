@@ -13,7 +13,7 @@ curl "${URL}/host/xstartup" --create-dirs -o "${HOME}/.vnc/xstartup"
 # Download distrobox
 # Find the distrobox binary
 # Using a list loop over the possible locations
-for bin in $(which distrobox) "~/.local/bin/distrobox"
+for bin in "distrobox" "~/.local/bin/distrobox"
 do
     if command -v $bin &> /dev/null
     then
