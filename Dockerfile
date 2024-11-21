@@ -1,36 +1,29 @@
 FROM docker.io/library/archlinux:latest AS arch
 
-# Pacman Initialization
-# Create build user
+# Initialization
 RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
     printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" | tee -a /etc/pacman.conf && \
     sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf && \
-    pacman -Syu --noconfirm && \
-    pacman -S \
-        wget \
-        base-devel \
-        git \
+    pacman -Syu \
+        # Base Tools
+        base-devel wget git nano htop \
+        # Desktop Environment
+        xorg-server plasma-desktop xdg-desktop-portal-kde vulkan-tools fuse3 \
+        # Audio
+        pulseaudio plasma-pa kde-gtk-config pkg-config \
+        # GUI Apps
+        firefox discover konsole dolphin kate \
+        flatpak steam lutris \
+        prismlauncher jre17-openjdk jre21-openjdk \
+        # Dependencies
+	    cargo rye \
         --noconfirm && \
     useradd -m --shell=/bin/bash build && usermod -L build && \
     echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-RUN pacman -Syu \
-        nano fuse3 \
-        xorg-server vulkan-tools plasma-desktop xdg-desktop-portal-kde \
-        pulseaudio plasma-pa kde-gtk-config pkg-config \
-        firefox discover konsole dolphin kate \
-        flatpak \
-        steam lutris \
-        prismlauncher jre17-openjdk jre21-openjdk \
-	cargo \
-        --noconfirm
-
 # Install DCSPkg
 RUN cargo install dcspkg --root /usr
-
-# Add Flathub - Its possible this doesnt work as system-wide flatpak is broken
-RUN flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Add paru and install AUR packages
 USER build
@@ -48,7 +41,12 @@ WORKDIR /
 RUN mkdir -p /home/fng
 WORKDIR /home/fng
 COPY home ./
+# Install DCSLauncher
 RUN git clone https://github.com/UWCS/dcslauncher.git
+# Install FNG-Admin Client
+RUN mkdir -p fng-admin/client && cd fng-admin/client && \
+    python -m venv .venv && \
+    .venv/bin/python -m pip install https://github.com/AlexWright1324/fng-admin/releases/latest/download/client-0.1.0-py3-none-any.whl
 WORKDIR /
 
 # Cleanup

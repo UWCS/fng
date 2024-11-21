@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=FNG-Admin-Client
+Comment=Friday Night Gaming
+Exec=/home/fng/fng-admin/client/.venv/bin/python -m client
+Terminal=false
+Type=Application
