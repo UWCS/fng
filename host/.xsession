@@ -30,6 +30,14 @@ echo "Stopping and removing any existing containers"
 podman stop -it 0 arch
 podman rm -f arch
 
+# This is horrifying, and I know full well it is.
+# But it works, and the systems were completely
+# broken until adding this line. Therefore,
+# we ball. - Tom
+echo "Attempting to reset podman"
+yes | podman system reset
+# (I'm not responsible for anything after this line)
+
 # if DEV variable is set run dev container
 if [ -n "$DEV" ]
 then
@@ -43,6 +51,9 @@ fi
 
 # OLD:
 # $distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
+
+# This line is required?
+XDG_RUNTIME_DIR=/run/user/$(id -u)
 
 podman create \
     --hostname $(hostname) \
