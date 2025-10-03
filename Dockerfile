@@ -8,7 +8,7 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
         # Base Tools
         base-devel wget git nano htop \
         # Desktop Environment
-        xorg-server plasma-desktop xdg-desktop-portal-kde vulkan-tools fuse3 \
+        xorg-server plasma-desktop xdg-desktop-portal-kde vulkan-tools fuse3 kwin-x11 \
         # Audio
         pulseaudio plasma-pa kde-gtk-config pkg-config \
         # GUI Apps
