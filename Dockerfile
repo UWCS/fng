@@ -15,6 +15,7 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
         firefox discover konsole dolphin kate \
         flatpak steam lutris \
         prismlauncher jre17-openjdk jre21-openjdk \
+        godot libresprite blender gimp \
         # Dependencies
 	    cargo rye \
         --noconfirm && \
@@ -33,7 +34,7 @@ RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -drf paru-bin
-# RUN paru --noconfirm -S PKGNAME
+RUN paru --noconfirm -S unityhub
 USER root
 WORKDIR /
 
