@@ -15,7 +15,7 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
         firefox discover konsole dolphin kate \
         flatpak steam lutris \
         prismlauncher jre17-openjdk jre21-openjdk \
-        godot libresprite blender gimp \
+        # godot libresprite blender gimp \
         # Dependencies
 	    cargo rye \
         --noconfirm && \
