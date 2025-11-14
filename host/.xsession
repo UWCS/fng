@@ -36,7 +36,7 @@ podman rm -f arch
 # we ball. - Tom
 # nah its chill bro - alex
 echo "Attempting to reset podman"
-podman system reset -f
+# podman system reset -f
 # (I'm not responsible for anything after this line)
 # me neither - alex
 
@@ -47,12 +47,17 @@ then
     image="localhost/fng:dev"
 else
     echo "Pulling the Latest container image"
-    image="ghcr.io/uwcs/fng:latest"
+    #image="ghcr.io/ublue-os/bazzite-arch" # blame artem tom and luna
+    #image="quay.io/toolbx/ubuntu-toolbox:24.04" # please please please please please please please please please please please
+    #image="ghcr.io/uwcs/fng:latest"
+    image="ghcr.io/uwcs/fng@sha256:e339c4ad68dafd76436fcbd2a212f452ae29ef0117052c7d08814ef71e8ecd5c" #oopsies - luna
     podman pull $image
 fi
 
 # OLD:
-# $distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
+#$distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
+
+# commented out, i pray.
 
 podman create \
     --hostname $(hostname) \
@@ -86,6 +91,7 @@ podman create \
     --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" \
     --additional-packages "" -- ''
 
+
 $distrobox enter arch -- echo "Started Container"
 podman exec \
 --interactive \
@@ -95,7 +101,7 @@ podman exec \
 --env CONTAINER_ID=arch \
 --env "SHELL=bash" \
 --env DISPLAY=$DISPLAY \
-arch bash -l -c "./startsession.sh; logout"
+arch bash -l -c "./startsession.sh; logout" # random bullshit, go - luna
 
 podman stop -it 0 arch
 podman rm -f arch
