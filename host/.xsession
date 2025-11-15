@@ -101,7 +101,7 @@ podman exec \
 --env CONTAINER_ID=arch \
 --env "SHELL=bash" \
 --env DISPLAY=$DISPLAY \
-arch bash -l -c "./startsession.sh; logout" # random bullshit, go - luna
+arch bash -l -c "./startsession.sh; logout"
 
 podman stop -it 0 arch
 podman rm -f arch
