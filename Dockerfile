@@ -26,16 +26,15 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
 # Install DCSPkg
 RUN cargo install dcspkg --root /usr
 
-# Add paru and install AUR packages
+# Add yay and install AUR packages
 USER build
 WORKDIR /home/build
-RUN git clone https://aur.archlinux.org/paru-bin.git --single-branch && \
-    cd paru-bin && \
+RUN git clone https://aur.archlinux.org/yay-bin.git --single-branch && \
+    cd yay-bin && \
     makepkg -si --noconfirm && \
     cd .. && \
-    rm -drf paru-bin
-RUN paru --noconfirm -S unityhub
-# RUN paru --noconfirm -S PKGNAME
+    rm -drf yay-bin
+# RUN yay --noconfirm -S PKGNAME
 USER root
 WORKDIR /
 
