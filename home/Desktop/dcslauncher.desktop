@@ -1,8 +1,0 @@
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Name=DCS Launcher
-Type=Application
-Exec=python /home/fng/dcslauncher/main.py
-Icon=/home/fng/dcslauncher/logo_wide.svg
-Path=/home/fng/dcslauncher/
-Terminal=false

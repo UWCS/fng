@@ -12,9 +12,8 @@ RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
         # Audio
         pulseaudio plasma-pa kde-gtk-config pkg-config \
         # GUI Apps
-        firefox discover konsole dolphin kate \
-        flatpak steam lutris \
-        prismlauncher jre17-openjdk jre21-openjdk \
+        firefox konsole dolphin kate \
+        flatpak \
         godot libresprite blender gimp \
         # Dependencies
 	    cargo rye \
@@ -35,7 +34,7 @@ RUN git clone https://aur.archlinux.org/yay-bin.git --single-branch && \
     cd .. && \
     rm -drf yay-bin
 # RUN yay --noconfirm -S PKGNAME
-RUN yay --noconfirm -S unityhub
+RUN yay --noconfirm -S unityhub code
 USER root
 WORKDIR /
 
