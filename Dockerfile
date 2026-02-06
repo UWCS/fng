@@ -35,6 +35,7 @@ RUN git clone https://aur.archlinux.org/yay-bin.git --single-branch && \
     cd .. && \
     rm -drf yay-bin
 # RUN yay --noconfirm -S PKGNAME
+RUN yay --noconfirm -S unityhub
 USER root
 WORKDIR /
 
