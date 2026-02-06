@@ -16,6 +16,10 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
 
+[Containments][20][General]
+positions={"2560x1440":["7","23","desktop:/blender.desktop","6","11","desktop:/libresprite.desktop","6","12","desktop:/unityhub.desktop","5","12","desktop:/gimp.desktop","6","13","desktop:/org.godotengine.Godot.desktop","5","11","desktop:/code-oss.desktop","6","10"]}
+sortMode=-1
+
 [Containments][20][ConfigDialog]
 DialogHeight=540
 DialogWidth=720
@@ -58,6 +62,9 @@ plugin=org.kde.plasma.pager
 [Containments][21][Applets][24]
 immutability=1
 plugin=org.kde.plasma.icontasks
+
+[Containments][21][Applets][24][Configuration][General]
+launchers=preferred://filemanager,preferred://browser,applications:org.kde.konsole.desktop
 
 [Containments][21][Applets][25]
 immutability=1
@@ -141,4 +148,4 @@ knownItems=org.kde.plasma.cameraindicator,org.kde.plasma.notifications,org.kde.p
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/org.prismlauncher.PrismLauncher.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/dcslauncher.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/steam.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/FixDesktop.sh,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a
+screenMapping=desktop:/code-oss.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/gimp.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/org.godotengine.Godot.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/libresprite.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/unityhub.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a,desktop:/blender.desktop,0,c0af9e06-3f95-40b7-98c1-7fdcb30d509a
