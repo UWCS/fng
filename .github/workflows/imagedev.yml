@@ -1,4 +1,4 @@
-name: Build and Publish Image (Dev)
+name: Build and Publish Image (GameDev)
 
 on:
   workflow_dispatch:
