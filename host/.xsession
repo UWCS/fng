@@ -30,16 +30,6 @@ echo "Stopping and removing any existing containers"
 podman stop -it 0 arch
 podman rm -f arch
 
-# This is horrifying, and I know full well it is.
-# But it works, and the systems were completely
-# broken until adding this line. Therefore,
-# we ball. - Tom
-# nah its chill bro - alex
-echo "Attempting to reset podman"
-# podman system reset -f
-# (I'm not responsible for anything after this line)
-# me neither - alex
-
 # if DEV variable is set run dev container
 if [ -n "$DEV" ]
 then
@@ -47,17 +37,9 @@ then
     image="localhost/fng:dev"
 else
     echo "Pulling the Latest container image"
-    #image="ghcr.io/ublue-os/bazzite-arch" # blame artem tom and luna
-    #image="quay.io/toolbx/ubuntu-toolbox:24.04" # please please please please please please please please please please please
-    #image="ghcr.io/uwcs/fng:latest"
-    image="ghcr.io/uwcs/fng@sha256:e339c4ad68dafd76436fcbd2a212f452ae29ef0117052c7d08814ef71e8ecd5c" #oopsies - luna
+    image="ghcr.io/uwcs/fng:latest"
     podman pull $image
 fi
-
-# OLD:
-#$distrobox create --nvidia -i $image -n arch -I --no-entry --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" -d | sed -e '\#--volume "'$HOME'":#d' -e '\#--home "'$HOME'"#c\--home "/home/fng"' -e '\#--volume /dcs:#d' | tr '\n' ' ') | source /dev/stdin
-
-# commented out, i pray.
 
 podman create \
     --hostname $(hostname) \
