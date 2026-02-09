@@ -26,10 +26,6 @@ echo "Using distrobox from \"$distrobox\""
 
 mkdir -p "/var/tmp/$USER"
 
-echo "Stopping and removing any existing containers"
-podman stop -it 0 arch
-podman rm -f arch
-
 # if DEV variable is set run dev container
 if [ -n "$DEV" ]
 then

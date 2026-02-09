@@ -9,6 +9,7 @@ URL="https://raw.githubusercontent.com/UWCS/fng/main"
 curl "${URL}/host/storage.conf" --create-dirs -o "${HOME}/.config/containers/storage.conf"
 curl "${URL}/host/.xsession" --create-dirs -o "${HOME}/.xsession"
 curl "${URL}/host/xstartup" --create-dirs -o "${HOME}/.vnc/xstartup"
+chmod +x ~/.xsession
 
 # Download distrobox
 # Find the distrobox binary
