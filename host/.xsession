@@ -37,10 +37,7 @@ then
     image="localhost/fng:dev"
 else
     echo "Pulling the Latest container image"
-    #image="ghcr.io/ublue-os/bazzite-arch" # blame artem tom and luna
-    #image="quay.io/toolbx/ubuntu-toolbox:24.04" # please please please please please please please please please please please
-    image="ghcr.io/uwcs/fng:latestdev" # package for game dev
-    #image="ghcr.io/uwcs/fng@sha256:e339c4ad68dafd76436fcbd2a212f452ae29ef0117052c7d08814ef71e8ecd5c" #oopsies - luna
+    image="ghcr.io/uwcs/fng:latestdev"
     podman pull $image
 fi
 
