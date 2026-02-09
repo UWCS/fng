@@ -4,6 +4,6 @@ unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 xhost +local:
 
-./.xsession
+~/.xsession
 
 vncserver -kill $DISPLAY
