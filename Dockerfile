@@ -1,6 +1,6 @@
 FROM docker.io/library/archlinux:latest AS arch
 
-FLATPAK_SYSTEM_HELPER_ON_SESSION=foo
+ENV FLATPAK_SYSTEM_HELPER_ON_SESSION=foo
 
 # Initialization
 RUN sed -i 's/#Color/Color/g' /etc/pacman.conf && \
