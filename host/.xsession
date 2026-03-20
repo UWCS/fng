@@ -39,7 +39,7 @@ fi
 
 podman create \
     --hostname $(hostname) \
-    --name "arch" \
+    --name "fedora" \
     --privileged --security-opt label=disable --security-opt apparmor=unconfined \
     --pids-limit=-1 \
     --user root:root \
@@ -48,7 +48,7 @@ podman create \
     --env "SHELL=bash" \
     --env "HOME=/home/fng" \
     --env "container=podman" \
-    --env "CONTAINER_ID=arch" \
+    --env "CONTAINER_ID=fedora" \
     --volume /tmp:/tmp:rslave \
     --volume $distrobox-init:/usr/bin/entrypoint:ro \
     --volume /:/run/host/:rslave \
@@ -70,16 +70,22 @@ podman create \
     --additional-packages "" -- ''
 
 
-$distrobox enter arch -- echo "Started Container"
+$distrobox enter fedora -- echo "Started Container"
+podman exec \
+export XAUTHORITY=/home/YOUR_USERNAME/.Xauthority; \
+export XDG_RUNTIME_DIR=/run/user/1000; \
+export CLUTTER_BACKEND=x11; \
+export QT_X11_NO_MITSHM=1
+
 podman exec \
 --interactive \
 --detach-keys= \
 --user=$USER \
 --workdir /home/fng \
---env CONTAINER_ID=arch \
+--env CONTAINER_ID=fedora \
 --env "SHELL=bash" \
 --env DISPLAY=$DISPLAY \
-arch bash -l -c "./startsession.sh; logout"
+fedora bash -l -c "./startsession.sh; logout"
 
-podman stop -it 0 arch
-podman rm -f arch
+podman stop -it 0 fedora
+podman rm -f fedora

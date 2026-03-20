@@ -11,6 +11,20 @@ then
     exit 1
 fi
 
+export $(dbus-launch)
+kwin_wayland --xwayland &
+
+sudo systemd-nspawn \
+-bD . \
+--volatile=no \
+--bind-ro=/home/flynt/.Xauthority \
+--bind=/run/user/1000 \
+--bind=/tmp/.X11-unix \
+--bind=/dev/shm \
+--bind=/dev/dri \
+--bind=/run/dbus/system_bus_socket \
+--bind=.
+
 Xephyr -screen 1280x720 :69 -host-cursor &
 XPID=$!
 export DISPLAY=:69
