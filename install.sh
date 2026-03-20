@@ -5,7 +5,7 @@ set -e
 # curl -s https://raw.githubusercontent.com/UWCS/fng/main/install.sh | sh
 
 # Download files
-URL="https://github.com/UWCS/fng/blob/fedora"
+URL="https://raw.githubusercontent.com/UWCS/fng/refs/heads/fedora"
 curl "${URL}/host/storage.conf" --create-dirs -o "${HOME}/.config/containers/storage.conf"
 curl "${URL}/host/.xsession" --create-dirs -o "${HOME}/.xsession"
 curl "${URL}/host/xstartup" --create-dirs -o "${HOME}/.vnc/xstartup"
