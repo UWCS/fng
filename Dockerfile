@@ -46,7 +46,7 @@ RUN git clone https://github.com/UWCS/dcslauncher.git
 # Install FNG-Admin Client
 RUN mkdir -p fng-admin/client && cd fng-admin/client && \
     python -m venv .venv && \
-    .venv/bin/python -m pip install https://github.com/AlexWright1324/fng-admin/releases/latest/download/client-0.1.0-py3-none-any.whl
+    .venv/bin/python -m pip install https://github.com/UWCS/fng-admin/releases/download/AAAAAUUGGGGGGGHHHHH/client-0.1.0-py3-none-any.whl
 WORKDIR /
 
 # Cleanup
