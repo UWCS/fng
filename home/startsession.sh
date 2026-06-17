@@ -1,5 +1,11 @@
 #!/bin/bash
-sudo flatpak remote-delete flathub
-flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --user org.vinegarhq.Sober
-dbus-run-session startplasma-x11
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+#nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}" || true
+export __GL_THREADED_OPTIMIZATIONS=1
+export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
+
+update-mime-database /usr/share/mime
+
+flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+startplasma-x11

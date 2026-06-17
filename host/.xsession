@@ -1,6 +1,6 @@
 #!/bin/bash
 # Redirect output to a log file and to the console
-exec > >(tee -i -a /tmp/$USER-xsession.log) 2>&1
+exec > >(tee -i -a $USER-xsession.log) 2>&1
 
 # Check if DISPLAY is set
 if [ -z "$DISPLAY" ]
@@ -8,6 +8,14 @@ then
     echo "DISPLAY is not set. Please set DISPLAY before running this script or start an X server."
     exit 1
 fi
+
+xsetroot -solid black
+xhost +local:
+
+flatpak override --user --filesystem=./ io.mpv.Mpv
+
+flatpak run --user io.mpv.Mpv --fs --geometry=1920x1080+0+0 --panscan=1.0 --no-border --no-osc --no-osd-bar --loop-file=inf ./GOOSE.mp4 & SPLASH=$!
+
 
 # Find the distrobox binary
 # Using a list loop over the possible locations
@@ -24,23 +32,42 @@ fi
 
 echo "Using distrobox from \"$distrobox\""
 
+podman kill arch
+podman rm -f arch
+podman unshare buildah unmount --all
+
+(
+    until podman container inspect -f '{{.State.Running}}' arch 2>/dev/null | grep -q "true"; do
+        sleep 0.5
+    done
+
+    until podman exec arch pgrep -x "plasmashell" > /dev/null 2>&1; do
+        sleep 0.5
+    done
+    sleep 2
+    
+    flatpak kill io.mpv.Mpv
+    
+    kill -9 $SPLASH 2>/dev/null
+) &
+
+
 mkdir -p "/var/tmp/$USER"
 
-# if DEV variable is set run dev container
-if [ -n "$DEV" ]
-then
-    echo "Running in dev mode"
-    image="localhost/fng:dev"
-else
-    echo "Pulling the Latest container image"
-    image="ghcr.io/uwcs/fng:latest"
-    podman pull $image
-fi
+./local-registry.sh
+
+image="localhost:5000/fng:dev"
+
+podman pull $image
+
+echo "Running in dev mode"
+
+ulimit -n $(ulimit -Hn)
 
 podman create \
     --hostname $(hostname) \
     --name "arch" \
-    --privileged --security-opt label=disable --security-opt apparmor=unconfined \
+    --privileged --security-opt label=disable \
     --pids-limit=-1 \
     --user root:root \
     --ipc host --network host \
@@ -49,11 +76,15 @@ podman create \
     --env "HOME=/home/fng" \
     --env "container=podman" \
     --env "CONTAINER_ID=arch" \
+    --env "TZ=Europe/London" \
+    --env "LANG=en_GB.UTF-8" \
+    --env "HOST_LOCALE=en_GB.UTF-8" \
     --volume /tmp:/tmp:rslave \
     --volume $distrobox-init:/usr/bin/entrypoint:ro \
-    --volume /:/run/host/:rslave \
+    --volume /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro \
     --volume /dev:/dev:rslave \
     --volume /sys:/sys:rslave \
+    --volume /:/run/host/:rprivate \
     --volume /dev/pts \
     --volume /dev/null:/dev/ptmx \
     --volume /var/log/journal \
@@ -66,9 +97,10 @@ podman create \
     $image \
     --verbose --name $USER --user $(id -u) --group $(id -g) \
     --home "/home/fng" --init "1" --nvidia "1" \
-    --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng" \
-    --additional-packages "" -- ''
-
+    --pre-init-hooks "mkdir -p /usr/local/bin && chown -R $(id -u):$(id -g) /home/fng && mv /usr/bin/pacman /usr/bin/p && ln -s /usr/bin/true /usr/bin/pacman && mv /etc/pacman.conf /etc/p.conf && touch /etc/pacman.conf" \
+    --additional-packages "" \
+    -- "rm -f /usr/bin/pacman && mv /usr/bin/p /usr/bin/pacman && mv /etc/p.conf /etc/pacman.conf"
+    ## setup_pacman more like go eat yourself
 
 $distrobox enter arch -- echo "Started Container"
 podman exec \
@@ -81,5 +113,6 @@ podman exec \
 --env DISPLAY=$DISPLAY \
 arch bash -l -c "./startsession.sh; logout"
 
-podman stop -it 0 arch
+podman stop arch
 podman rm -f arch
+podman unshare buildah unmount --all
