@@ -58,7 +58,7 @@ mkdir -p "/var/tmp/$USER"
 
 image="localhost:5000/fng:dev"
 
-podman pull $image
+podman pull --tls-verify=false $image
 
 echo "Running in dev mode"
 
