@@ -1,11 +1,8 @@
 #!/bin/bash
-export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
-#nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}" || true
-export __GL_THREADED_OPTIMIZATIONS=1
-export __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1
-
-update-mime-database /usr/share/mime
+setxkbmap gb
 
 flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
-startplasma-x11
+# we allow fusermount to work via SYS_ADMIN but drop +ep from ambient caps so e.g. uns works (otherwise bwrap complains & similar)
+# not a nice sln, need to assess better ways of doing at some point
+dbus-run-session -- bash -c 'export DBUS_SYSTEM_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS && exec setpriv --ambient-caps="-all" startplasma-x11'

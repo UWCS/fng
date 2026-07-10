@@ -1,6 +1,6 @@
 #!/bin/bash
 # Redirect output to a log file and to the console
-exec > >(tee -i -a $USER-xsession.log) 2>&1
+exec > >(tee -i -a $(hostname)-$(id -u)-xsession.log) 2>&1
 
 set -e
 

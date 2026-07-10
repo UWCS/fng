@@ -1,39 +1,60 @@
+# pull x86_64-v3 cachy variant. w/ avx512 support on a test machine, can be swapped to v4. target doesn't have avx512
 FROM docker.io/cachyos/cachyos-v3:latest AS arch
 
+# has e.g. NoExtract directive. dirs get nuked later down anyway to reduce image size but should mildly reduce build time
 COPY ./home/pacman.conf /etc/pacman.conf
 
+# make sure pacman can check against cachy signed packages
+# arch as failsafe in case someone wanting to install non-cachy-recompiled packages
+# target machines are x86_64-v3 so use v3 mirrorlist
+# yeet rust after dcspkg build to reduce final image size (ideally sort dcspkg ci out soon though)
 RUN pacman-key --init && \
-    pacman-key --populate archlinux
-
-RUN pacman -Sy --noconfirm \
-    cachyos-keyring \
-    cachyos-mirrorlist
-
-RUN sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf && \
+    pacman-key --populate \
+        archlinux cachyos && \
+    pacman -Sy --noconfirm \
+        cachyos-keyring \
+        cachyos-v3-mirrorlist && \
     pacman -Syu --noconfirm \
         base-devel wget git nano htop \
-        xorg-server plasma-desktop xdg-desktop-portal-kde fuse3 vulkan-tools kwin-x11 \
-        pulseaudio plasma-pa kde-gtk-config \
+        plasma-desktop xdg-desktop-portal-kde fuse3 vulkan-tools kwin-x11 \
+        pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
-        flatpak steam lutris yay \
-        prismlauncher jre21-openjdk proton-cachyos && \
+        flatpak steam lutris \
+        prismlauncher jre21-openjdk && \
     pacman -S --noconfirm rust && \
         cargo install dcspkg --root /usr && \
-        pacman -Rns --noconfirm rust && \
-    rm -rf \
-        ~/.cache/yay/* \
+        pacman -Rns --noconfirm rust
+
+# clear out dirs with redundant files
+# do locale gen (US too since e.g. steam & others will look for it and generate them anyway if not present)
+# optimise pkg build if e.g. user uses aur/yay to build against architecture of host (useful if building image non-locally)
+RUN rm -rf \
         /tmp/* /var/cache/pacman/* \
         /var/lib/pacman/sync/* \
         /root/.cargo \
         /usr/share/man/* \
         /usr/share/doc/* \
         /usr/share/gtk-doc/* && \
-    echo "ALL ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/acc && \
-    	chmod 0440 /etc/sudoers.d/acc
+    sed -i 's/#en_GB.UTF-8/en_GB.UTF-8/g' /etc/locale.gen && \
+    sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen && \
+        locale-gen && \
+    sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf
 
-RUN mkdir -p /home/fng
+# add fng user and make it a passwordless sudoer, and create run dirs
+# sudo will ignore if not 0440
+# create run dir now and make our user the owner of it - fuse and various other bits break without
+# will break heavily if not 0700
+RUN useradd -u 1000 -m -s /bin/bash fng && \
+        echo "fng ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/fng && \
+        chmod 0440 /etc/sudoers.d/fng && \
+        mkdir /run/user/1000 && \
+        chown -R 1000:1000 /run/user/1000 && \
+        chmod 0700 /run/user/1000
+
+# copy pre-config'd home dir and make our user the owner of it
+USER fng
 WORKDIR /home/fng
-COPY home ./
-RUN git clone --depth=1 https://github.com/UWCS/dcslauncher.git
+COPY --chown=1000:1000 home ./
 
-RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf
+# ideally sort ci out for this as well
+RUN git clone --depth=1 https://github.com/UWCS/dcslauncher.git
