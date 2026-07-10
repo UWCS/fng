@@ -59,6 +59,7 @@ fi
             # deprecated and not gen'd by default in nvidia-ctk v1.18+ - dcs on v1.13.5 currently, hence workaround needed
 # fuse as device to ward off some weird edge cases
 # seccomp unconfined is more a failsafe (not in use on target currently)
+# unmask so procfs can be mounted
 # locale, layout & tz setting is needed else container will be american, have an american keyboard, and wrong time during bst
 # generally moved env vars here for centralisation's sake
     # DISPLAY binds to the set display (usually :0 if running normally, rundev.sh uses :69 currently for running via Xephyr)
@@ -103,6 +104,7 @@ podman run --rm \
     --network host \
     --pids-limit=-1 \
     --security-opt seccomp=unconfined \
+    --security-opt unmask=ALL \
     --cdi-spec-dir=./host \
     --device nvidia.com/gpu=all \
     --device /dev/fuse \
