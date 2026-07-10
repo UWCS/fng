@@ -18,11 +18,31 @@ podman rm -f arch
 # fuse storage for container (see storage.conf)
 mkdir -p "/var/tmp/$USER"
 
-./local-registry.sh
+image="localhost/fng:dev"
 
-image="localhost:5000/fng:dev"
+# if you want to check an image exists yourself, note that it doesn't output to stdout ie run the command then "echo $?"; 0 --> exists, 1 --> doesn't
+if [ -f "/var/tmp/$USER/.ts" ] && [ "/var/tmp/$USER/.ts" -nt "./fng-dev.tar.zst" ] && podman image exists "$image"; then
+    # .ts is a marker file. if the marker file:
+        # - doesn't exist: copy image from nfs to /var/tmp, create marker file
+        # - has an mtime older than/the same as the mtime of the zst: copy image, update mtime of marker file
+        # - does exist and mtime is newer than the mtime of the zst: skip copy, just start container
+    echo "Up-to-date image exists locally already, skipping copy..."
+else
+    echo "Up-to-date image not present locally, copying..."
 
-podman pull --tls-verify=false $image
+    # clean up the old local image so it's not left dangling when untagged
+    # more important for testing if you're rebuilding a lot bc the images can take up a fair chunk of space
+    podman rmi -f "$image" 2>/dev/null
+
+    # decompress zst and pipe into skopeo
+    # podman load is awfully slow, skopeo is a sizeable chunk quicker, doesn't support oci-archives properly (podman save is docker-archive by default)
+    # podman unshare to namespace the copying so permissions don't get lost
+    # skopeo and zstd utils are pre-installed on the dcs machines
+    # -T0 utilises all cores
+    zstdcat -T0 ./fng-dev.tar.zst | podman unshare skopeo copy docker-archive:/dev/stdin containers-storage:localhost/fng:dev
+
+    touch "/var/tmp/$USER/.ts"
+fi
 
 # cap sys_admin currently added temporarily rather than --privileged so e.g. fuse mount will work
     # -ep in ambient cap set to drop it after invoking plasma startup (see home/starsession.sh)
