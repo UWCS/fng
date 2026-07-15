@@ -5,4 +5,8 @@ ColorScheme=BreezeDark
 Theme=breeze-dark
 
 [KDE]
-widgetStyle=Breeze
+LookAndFeelPackage=org.kde.breezedark.desktop
+
+[KDE Action Restrictions][$i]
+action/lock_screen=false
+action/switch_user=false
