@@ -16,7 +16,7 @@ RUN pacman-key --init && \
         cachyos-v3-mirrorlist && \
     pacman -Syu --noconfirm \
         base-devel wget git nano htop \
-        plasma-desktop xdg-desktop-portal-kde fuse3 vulkan-tools kwin-x11 \
+        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
         flatpak steam lutris \
@@ -42,19 +42,32 @@ RUN rm -rf \
 
 # add fng user and make it a passwordless sudoer, and create run dirs
 # sudo will ignore if not 0440
-# create run dir now and make our user the owner of it - fuse and various other bits break without
-# will break heavily if not 0700
+# enable linger to get user systemd at startup
+# mask services that won't work in the container anyway or that are redundant since what they do is handled by the host
 RUN useradd -u 1000 -m -s /bin/bash fng && \
         echo "fng ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/fng && \
         chmod 0440 /etc/sudoers.d/fng && \
-        mkdir /run/user/1000 && \
-        chown -R 1000:1000 /run/user/1000 && \
-        chmod 0700 /run/user/1000
+        mkdir -p /var/lib/systemd/linger && \
+        touch /var/lib/systemd/linger/fng && \
+        systemctl mask \
+            getty@.service console-getty.service polkit.service \
+            proc-sys-fs-binfmt_misc.automount systemd-remount-fs.service systemd-udevd.service \
+            systemd-udev-trigger.service initrd-udevadm-cleanup-db.service systemd-firstboot.service \
+            systemd-update-utmp.service systemd-tmpfiles-clean.service \
+            systemd-network-generator.service systemd-network-persistent-storage.service \
+            systemd-networkd.service systemd-networkd-wait-online.service \
+            systemd-resolved.service systemd-resolved-monitor.socket systemd-resolved-varlink.socket \
+            systemd-networkd-resolve-hook.socket systemd-networkd-varlink-metrics.socket \
+            systemd-networkd-varlink.socket systemd-networkd.socket systemd-nsresourced.service \
+            systemd-nsresourced.socket systemd-machine-id-commit.service
 
 # copy pre-config'd home dir and make our user the owner of it
 USER fng
 WORKDIR /home/fng
 COPY --chown=1000:1000 home ./
+RUN mkdir -p ./.config/systemd/user/default.target.wants && \
+    ln -s ./.config/systemd/user/startsession.service ./.config/systemd/user/default.target.wants/startsession.service && \
+    flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # ideally sort ci out for this as well
 RUN git clone --depth=1 https://github.com/UWCS/dcslauncher.git
