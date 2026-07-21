@@ -9,6 +9,9 @@ COPY --chown=0:0 ./home/pacman.conf /etc/pacman.conf
 # arch as failsafe in case someone wanting to install non-cachy-recompiled packages
 # target machines are x86_64-v3 so use v3 mirrorlist
 # yeet rust after dcspkg build to reduce final image size (ideally sort dcspkg ci out soon though)
+# default ocl-icd is missing symbols, opencl-icd-loader fixes this
+    # available in cachy repos, aur on vanilla arch
+    # --ask=4 corresponds to ALPM_QUESTION_CONFLICT_PKG i.e. answer Y not N to opencl-icd-loader replacing ocl-icd
 RUN pacman-key --init && \
     pacman-key --populate \
         archlinux cachyos && \
@@ -19,6 +22,7 @@ RUN pacman-key --init && \
         firefox discover konsole dolphin kate \
         flatpak steam lutris \
         prismlauncher jre21-openjdk && \
+    pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
         cargo install dcspkg --root /usr && \
         pacman -Rns --noconfirm rust
