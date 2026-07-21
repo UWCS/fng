@@ -118,6 +118,7 @@ podman run --rm \
     --env "HOME=/home/fng" \
     --env "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus" \
     --env "__GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1" \
+    --env "XDG_SESSION_TYPE=x11" \
     --env "XDG_RUNTIME_DIR=/run/user/1000" \
     --env "PULSE_SERVER=unix:/run/user/1000/pulse/native" \
     --env "XAUTHORITY=/tmp/.Xauthority" \
@@ -129,6 +130,7 @@ podman run --rm \
     --volume /etc/machine-id:/etc/machine-id:ro \
     --volume /etc/hosts:/etc/hosts:ro \
     --volume /etc/resolv.conf:/etc/resolv.conf:ro \
+    --volume /etc/nsswitch.conf:/etc/nsswitch.conf:ro \
     --volume "/tmp/.X11-unix:/tmp/.X11-unix:ro" \
     --volume "$XDG_RUNTIME_DIR/pipewire-0:/run/user/1000/pipewire-0" \
     --volume "$XDG_RUNTIME_DIR/pulse:/run/user/1000/pulse" \
