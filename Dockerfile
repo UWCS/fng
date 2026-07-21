@@ -12,9 +12,6 @@ COPY --chown=0:0 ./home/pacman.conf /etc/pacman.conf
 RUN pacman-key --init && \
     pacman-key --populate \
         archlinux cachyos && \
-    pacman -Sy --noconfirm \
-        cachyos-keyring \
-        cachyos-v3-mirrorlist && \
     pacman -Syu --noconfirm \
         base-devel wget git nano htop \
         plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
