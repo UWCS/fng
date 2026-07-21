@@ -2,7 +2,8 @@
 FROM docker.io/cachyos/cachyos-v3:latest AS arch
 
 # has e.g. NoExtract directive. dirs get nuked later down anyway to reduce image size but should mildly reduce build time
-COPY ./home/pacman.conf /etc/pacman.conf
+# make sure root in container owns it
+COPY --chown=0:0 ./home/pacman.conf /etc/pacman.conf
 
 # make sure pacman can check against cachy signed packages
 # arch as failsafe in case someone wanting to install non-cachy-recompiled packages
