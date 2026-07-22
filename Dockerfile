@@ -49,7 +49,7 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
         echo "fng ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/fng && \
         chmod 0440 /etc/sudoers.d/fng && \
         systemctl mask \
-            getty@.service console-getty.service polkit.service \
+            getty@.service console-getty.service \
             proc-sys-fs-binfmt_misc.automount systemd-remount-fs.service systemd-udevd.service \
             systemd-udev-trigger.service initrd-udevadm-cleanup-db.service systemd-firstboot.service \
             systemd-update-utmp.service systemd-tmpfiles-clean.service \
@@ -61,6 +61,11 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
             systemd-networkd-resolve-hook.socket systemd-networkd-varlink-metrics.socket \
             systemd-networkd-varlink.socket systemd-networkd.socket systemd-nsresourced.service \
             systemd-nsresourced.socket systemd-machine-id-commit.service
+            polkit-agent-helper.socket && \
+        chmod u+s /usr/lib/polkit-1/polkit-agent-helper-1
+
+# copy default polkit auto-allow rules. note for kernel <6.12 suid agent must be used
+COPY --chown=root:polkitd --chmod=0640 host/99-fng-polkit.rules /etc/polkit-1/rules.d/99-fng-polkit.rules
 
 # copy systemd service that will handle login
 COPY --chown=root:root --chmod=0644 host/startsession.service /etc/systemd/system/startsession.service
