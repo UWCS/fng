@@ -3,7 +3,7 @@ FROM docker.io/cachyos/cachyos-v3:latest AS arch
 
 # has e.g. NoExtract directive. dirs get nuked later down anyway to reduce image size but should mildly reduce build time
 # make sure root in container owns it
-COPY --chown=0:0 ./home/pacman.conf /etc/pacman.conf
+COPY --chown=root:root ./home/pacman.conf /etc/pacman.conf
 
 # make sure pacman can check against cachy signed packages
 # arch as failsafe in case someone wanting to install non-cachy-recompiled packages
@@ -68,7 +68,7 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
 # copy pre-config'd home dir and make our user the owner of it
 USER fng
 WORKDIR /home/fng
-COPY --chown=1000:1000 home ./
+COPY --chown=fng:fng home ./
 RUN mkdir -p ./.config/systemd/user/default.target.wants && \
     ln -s ./.config/systemd/user/startsession.service ./.config/systemd/user/default.target.wants/startsession.service && \
     flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
