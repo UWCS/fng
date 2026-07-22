@@ -1,11 +1,12 @@
 [Unit]
 Description=Start Plasma
-Wants=dbus.socket
+Wants=dbus.socket systemd-logind.service
 After=dbus.socket
 
 [Service]
 Type=simple
 User=fng
+PAMName=login
 EnvironmentFile=/tmp/en
 WorkingDirectory=/home/fng
 ExecStart=/bin/bash -lc "startplasma-x11; sudo systemctl poweroff"

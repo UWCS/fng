@@ -42,15 +42,12 @@ RUN rm -rf \
         locale-gen && \
     sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf
 
-# add fng user and make it a passwordless sudoer, and create run dirs
+# add fng user and make it a passwordless sudoer
 # sudo will ignore if not 0440
-# enable linger to get user systemd at startup
 # mask services that won't work in the container anyway or that are redundant since what they do is handled by the host
 RUN useradd -u 1000 -m -s /bin/bash fng && \
         echo "fng ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/fng && \
         chmod 0440 /etc/sudoers.d/fng && \
-        mkdir -p /var/lib/systemd/linger && \
-        touch /var/lib/systemd/linger/fng && \
         systemctl mask \
             getty@.service console-getty.service polkit.service \
             proc-sys-fs-binfmt_misc.automount systemd-remount-fs.service systemd-udevd.service \
@@ -65,13 +62,15 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
             systemd-networkd-varlink.socket systemd-networkd.socket systemd-nsresourced.service \
             systemd-nsresourced.socket systemd-machine-id-commit.service
 
+# copy systemd service that will handle login
+COPY --chown=root:root --chmod=0644 host/startsession.service /etc/systemd/system/startsession.service
+RUN systemctl enable startsession.service
+
 # copy pre-config'd home dir and make our user the owner of it
 USER fng
 WORKDIR /home/fng
 COPY --chown=fng:fng home ./
-RUN mkdir -p ./.config/systemd/user/default.target.wants && \
-    ln -s ./.config/systemd/user/startsession.service ./.config/systemd/user/default.target.wants/startsession.service && \
-    flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+RUN flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # ideally sort ci out for this as well
 RUN git clone --depth=1 https://github.com/UWCS/dcslauncher.git
