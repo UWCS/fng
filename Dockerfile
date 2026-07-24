@@ -20,7 +20,7 @@ RUN pacman-key --init && \
         plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
-        flatpak steam lutris \
+        flatpak steam lutris spectacle \
         prismlauncher jre21-openjdk && \
     pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
