@@ -41,7 +41,7 @@ nvidia-ctk cdi generate | sed '
   /path:/!b loop
   /chmod/d
 }
-/^[[:space::]]*mounts:/a\
+/^[[:space:]]*mounts:/a\
   - containerPath: /etc/OpenCL/vendors/nvidia.icd\
     hostPath: /etc/OpenCL/vendors/nvidia.icd\
     options:\
