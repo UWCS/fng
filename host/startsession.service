@@ -6,9 +6,9 @@ After=dbus.socket
 [Service]
 Type=simple
 User=fng
-PAMName=login
-EnvironmentFile=/tmp/en
 WorkingDirectory=/home/fng
+EnvironmentFile=/etc/environment
+PAMName=login
 ExecStart=/bin/bash -lc "startplasma-x11; sudo systemctl poweroff"
 
 [Install]

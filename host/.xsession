@@ -139,4 +139,4 @@ podman run --rm \
     --group-add keep-groups \
     --entrypoint /bin/bash \
     $image \
-    -c "env > /tmp/en && exec /sbin/init"
+    -c "env > /etc/environment && exec /sbin/init"
