@@ -60,7 +60,7 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
             systemd-resolved.service systemd-resolved-monitor.socket systemd-resolved-varlink.socket \
             systemd-networkd-resolve-hook.socket systemd-networkd-varlink-metrics.socket \
             systemd-networkd-varlink.socket systemd-networkd.socket systemd-nsresourced.service \
-            systemd-nsresourced.socket systemd-machine-id-commit.service
+            systemd-nsresourced.socket systemd-machine-id-commit.service \
             polkit-agent-helper.socket && \
         chmod u+s /usr/lib/polkit-1/polkit-agent-helper-1
 
