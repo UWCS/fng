@@ -26,6 +26,9 @@ plugin=org.kde.panel
 [Containments][2][Applets][1]
 plugin=org.kde.plasma.kickoff
 
+[Containments][2][Applets][1][Shortcuts]
+global=Meta
+
 [Containments][2][Applets][2]
 plugin=org.kde.plasma.pager
 
