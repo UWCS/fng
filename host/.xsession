@@ -130,7 +130,6 @@ podman run --rm \
     --volume /etc/machine-id:/etc/machine-id:ro \
     --volume /etc/hosts:/etc/hosts:ro \
     --volume /etc/resolv.conf:/etc/resolv.conf:ro \
-    --volume /etc/nsswitch.conf:/etc/nsswitch.conf:ro \
     --volume "/tmp/.X11-unix:/tmp/.X11-unix:ro" \
     --volume "$XDG_RUNTIME_DIR/pipewire-0:/run/user/1000/pipewire-0" \
     --volume "$XDG_RUNTIME_DIR/pulse:/run/user/1000/pulse" \
