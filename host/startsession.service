@@ -1,0 +1,15 @@
+[Unit]
+Description=Start Plasma
+Wants=dbus.socket systemd-logind.service
+After=dbus.socket
+
+[Service]
+Type=simple
+User=fng
+WorkingDirectory=/home/fng
+EnvironmentFile=/etc/environment
+PAMName=login
+ExecStart=/bin/bash -lc "startplasma-x11; sudo systemctl poweroff"
+
+[Install]
+WantedBy=default.target
