@@ -17,6 +17,7 @@ RUN pacman-key --init && \
         archlinux cachyos && \
     pacman -Syu --noconfirm \
         base-devel wget git less nano htop noto-fonts-cjk \
+        vlc vlc-plugins-all ffmpeg \
         plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
