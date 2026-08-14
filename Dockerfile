@@ -16,7 +16,7 @@ RUN pacman-key --init && \
     pacman-key --populate \
         archlinux cachyos && \
     pacman -Syu --noconfirm \
-        base-devel wget git nano htop \
+        base-devel wget git less nano htop \
         plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
