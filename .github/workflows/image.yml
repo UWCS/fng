@@ -28,12 +28,13 @@ jobs:
           image: ${{ env.REPO_LC }}
           tags: latest
           containerfiles: ./Containerfile
+          disable-fuse-overlayfs: true
           extra-args: |
             --squash
   
       - name: Push to GHCR
         id: push-img
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@v3
         with:
           image: ${{ steps.build-img.outputs.image }}
           tags: ${{ steps.build-img.outputs.tags }}
