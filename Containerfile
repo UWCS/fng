@@ -16,7 +16,7 @@ RUN pacman-key --init && \
     pacman-key --populate \
         archlinux cachyos && \
     pacman -Syu --noconfirm \
-        base-devel wget git less nano htop \
+        dbus-daemon-units base-devel wget git less nano htop \
         noto-fonts-cjk xorg-fonts-misc \
         vlc vlc-plugins-all ffmpeg \
         plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
