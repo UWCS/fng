@@ -35,7 +35,7 @@ jobs:
         id: push-img
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: {{ steps.build-img.outputs.image }}
+          image: ${{ steps.build-img.outputs.image }}
           tags: ${{ steps.build-img.outputs.tags }}
           registry: ghcr.io
           username: ${{ github.repository_owner }}
