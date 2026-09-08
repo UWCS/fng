@@ -21,10 +21,11 @@ jobs:
         env:
           REPO: '${{ github.repository }}'
       
-      - name: MODERN PODMAN PLS GHA
-        uses: redhat-actions/podman-install@v1
-        with:
-          start-service: 'true'
+      - name: thanks random blog post hope this works
+        run: |
+          sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu plucky main universe" > /etc/apt/sources.list.d/plucky.list'
+          sudo apt update
+          sudo apt install -y podman conmon crun runc 
 
       - name: Build Image with Buildah
         id: build-img
