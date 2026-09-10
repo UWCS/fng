@@ -20,12 +20,6 @@ jobs:
         run: echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
         env:
           REPO: '${{ github.repository }}'
-      
-      - name: thanks random blog post hope this works
-        run: |
-          sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu plucky main universe" > /etc/apt/sources.list.d/plucky.list'
-          sudo apt update
-          sudo apt install -y podman conmon crun runc 
 
       - name: Build Image with Buildah
         id: build-img
@@ -48,6 +42,5 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
           extra-args: |
-            --format=oci
             --compression-format=zstd
             --compression-level=7
