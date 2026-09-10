@@ -76,6 +76,10 @@ else
             git fetch origin >/dev/null 2>&1
             git reset --hard
 
+            # stop untracked stuff getting in the way
+            # run in dev mode if you're developing in a live instance
+            git clean -f
+
             # checkout specific hash corresponding to img build
             git checkout "$remote_hash"
 
