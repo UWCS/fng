@@ -37,6 +37,8 @@ jobs:
           disable-fuse-overlayfs: true
           extra-args: |
             --squash
+          labels: |
+            uwcs.fng.commit=${{ github.sha }}
   
       - name: Push to GHCR
         id: push-img

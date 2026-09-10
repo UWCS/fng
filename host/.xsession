@@ -2,6 +2,7 @@
 
 # log per hostname - stops clashes when storing outside local tmp storage & allows easier dx of machine-specific quirks
 exec > >(tee -i -a $(hostname)-$(id -u)-xsession.log) 2>&1
+echo $(date)
 
 if [ -z "$DISPLAY" ]
 then
@@ -18,30 +19,101 @@ podman rm -f arch
 # overlayfs storage for container (see storage.conf)
 mkdir -p "/var/tmp/$USER"
 
-image="localhost/fng:dev"
+#DEV=1
 
-# if you want to check an image exists yourself, note that it doesn't output to stdout ie run the command then "echo $?"; 0 --> exists, 1 --> doesn't
-if [ -f "/var/tmp/$USER/.ts" ] && [ "/var/tmp/$USER/.ts" -nt "./fng-dev.tar.zst" ] && podman image exists "$image"; then
-    # .ts is a marker file. if the marker file:
-        # - doesn't exist: copy image from nfs to /var/tmp, create marker file
-        # - has an mtime older than/the same as the mtime of the zst: copy image, update mtime of marker file
-        # - does exist and mtime is newer than the mtime of the zst: skip copy, just start container
-    echo "Up-to-date image exists locally already, skipping copy..."
+if [ -n "$DEV" ]; then
+    echo "Running fng:dev"
+    image="fng:dev"
+
+    # if you want to check an image exists yourself, note that it doesn't output to stdout ie run the command then "echo $?"; 0 --> exists, 1 --> doesn't
+    if [ -f "/var/tmp/$USER/.ts" ] && [ "/var/tmp/$USER/.ts" -nt "./fng-dev.tar.zst" ] && podman image exists "$image"; then
+        # .ts is a marker file. if the marker file:
+            # - doesn't exist: copy image from nfs to /var/tmp, create marker file
+            # - has an mtime older than/the same as the mtime of the zst: copy image, update mtime of marker file
+            # - does exist and mtime is newer than the mtime of the zst: skip copy, just start container
+        echo "Up-to-date image exists locally already, skipping copy..."
+    else
+        echo "Up-to-date image not present locally, copying..."
+
+        # clean up the old local image so it's not left dangling when untagged
+        # more important for testing if you're rebuilding a lot bc the images can take up a fair chunk of space
+        podman rmi -f "$image" 2>/dev/null
+
+        # decompress zst and pipe into skopeo
+        # podman load is awfully slow, skopeo is a sizeable chunk quicker, doesn't support oci-archives properly (podman save is docker-archive by default)
+        # podman unshare to namespace the copying so permissions don't get lost
+        # skopeo and zstd utils are pre-installed on the dcs machines
+        # -T0 utilises all cores
+        zstdcat -T0 ./fng-dev.tar.zst | podman unshare skopeo copy docker-archive:/dev/stdin containers-storage:"$image"
+
+        touch "/var/tmp/$USER/.ts"
+    fi
 else
-    echo "Up-to-date image not present locally, copying..."
+    image="fng:latest"
+    remote_image="docker://ghcr.io/uwcs/$image"
+    airport_image="oci:$(pwd)/$image"
+    local_image="containers-storage:$image"
 
-    # clean up the old local image so it's not left dangling when untagged
-    # more important for testing if you're rebuilding a lot bc the images can take up a fair chunk of space
-    podman rmi -f "$image" 2>/dev/null
+    local_hash=$(git rev-parse HEAD 2>/dev/null)
+    remote_hash=$(skopeo inspect "$remote_image" --format '{{ index .Labels "uwcs.fng.commit" }}' 2>/dev/null)
 
-    # decompress zst and pipe into skopeo
-    # podman load is awfully slow, skopeo is a sizeable chunk quicker, doesn't support oci-archives properly (podman save is docker-archive by default)
-    # podman unshare to namespace the copying so permissions don't get lost
-    # skopeo and zstd utils are pre-installed on the dcs machines
-    # -T0 utilises all cores
-    zstdcat -T0 ./fng-dev.tar.zst | podman unshare skopeo copy docker-archive:/dev/stdin containers-storage:localhost/fng:dev
+    if [[ -n "$remote_hash" && "$local_hash" != "$remote_hash" ]]; then
+        if mkdir "$(pwd)/gitup.lock" 2>/dev/null; then
+            trap 'rm -rf "$(pwd)/gitup.lock" 2>/dev/null' EXIT
 
-    touch "/var/tmp/$USER/.ts"
+            git fetch origin >/dev/null 2>&1
+            git reset --hard
+            git checkout "$remote_hash"
+
+            rm -rf "$(pwd)/gitup.lock" 2>/dev/null
+            trap - EXIT
+
+            exec bash "$0" "$@"
+        else
+            echo "Waiting for gitup.lock to be released before script restart"
+            while [[ -d "$(pwd)/gitup.lock" ]]; do
+                sleep 2
+            done
+            exec bash "$0" "$@"
+        fi
+    fi
+
+    remote_digest=$(skopeo inspect "$remote_image" --format "{{.Digest}}" 2>/dev/null)
+    airport_digest=$(skopeo inspect "$airport_image" --format "{{.Digest}}" 2>/dev/null)
+    local_digest=$(skopeo inspect "$local_image" --format "{{.Digest}}" 2>/dev/null)
+
+    if [[ -n "$remote_digest" && "$remote_digest" == "$airport_digest" && ! -d "$(pwd)/update.lock" ]]; then
+        echo "NFS image same as remote, skipping download"
+    else
+        if mkdir "$(pwd)/update.lock" 2>/dev/null; then
+            trap 'rm -rf "$(pwd)/update.lock" 2>/dev/null' EXIT
+
+            echo "Updated image upstream, downloading..."
+            if podman unshare skopeo copy "$remote_image" "$airport_image"; then
+                echo "Success!"
+            else
+                echo "Lack of success!"
+            fi
+
+            rm -rf "$(pwd)/update.lock" 2>/dev/null
+            trap - EXIT
+        else
+            echo "Waiting for $(pwd)/update.lock to be released to pull updated image"
+
+            while [[ -d "$(pwd)/update.lock" ]]; do
+                sleep 2
+            done
+        fi
+    fi
+
+    airport_digest=$(skopeo inspect "$airport_image" --format "{{.Digest}}" 2>/dev/null)
+
+    if [[ -n "$airport_digest" && "$local_digest" == "$airport_digest" ]]; then
+        echo "Local image same as NFS image, skipping pull..."
+    else
+        echo "Updated image on NFS, pulling locally..."
+        podman unshare skopeo copy "$airport_image" "$local_image"
+    fi
 fi
 
 # --hostname implies private UTS namespace
