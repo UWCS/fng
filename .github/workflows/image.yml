@@ -16,6 +16,12 @@ jobs:
         with:
           submodules: true
 
+      - name: Copy storage conf
+        run: |
+          mkdir -p /home/runner/.config/containers
+          cp ./host/storage.conf /home/runner/.config/containers/storage.conf
+          podman system reset -f
+
       - name: Lowercase repo name
         run: echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
         env:
