@@ -1,0 +1,6 @@
+polkit.addRule(function(action, subject) {
+    // slight edge case safeguarding by bounding to active session
+    if (subject.user == "fng" && subject.active) {
+        return polkit.Result.YES;
+    }
+});
