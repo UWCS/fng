@@ -15,4 +15,6 @@ else
     chmod +x ~/.xsession
 fi
 
+./genicd.sh
+
 echo "Done"

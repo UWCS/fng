@@ -41,7 +41,7 @@ if [ -n "$DEV" ]; then
 
         # decompress zst and pipe into skopeo
         # podman load is awfully slow, skopeo is a sizeable chunk quicker, doesn't support oci-archives properly (podman save is docker-archive by default)
-        # podman unshare to namespace the copying so permissions don't get lost
+        # podman unshare to namespace the copying so permissions don't get lost (IMPORTANT - this applies for ALL build/pull workflows, hence applied below too)
         # skopeo and zstd utils are pre-installed on the dcs machines
         # -T0 utilises all cores
         zstdcat -T0 ./fng-dev.tar.zst | podman unshare skopeo copy docker-archive:/dev/stdin containers-storage:"$image"
@@ -49,31 +49,51 @@ if [ -n "$DEV" ]; then
         touch "/var/tmp/$USER/.ts"
     fi
 else
+    # base
     image="fng:latest"
+
+    # image pushed to GHCR
     remote_image="docker://ghcr.io/uwcs/$image"
+
+    # image on NFS
     airport_image="oci:$(pwd)/$image"
+
+    # image on specific PC's local disk
     local_image="containers-storage:$image"
 
-    local_hash=$(git rev-parse HEAD 2>/dev/null)
+    # hash of HEAD commit from checked-out branch/commit on NFS
+    airport_hash=$(git rev-parse HEAD 2>/dev/null)
+
+    # commit hash GHCR image was built against
     remote_hash=$(skopeo inspect "$remote_image" --format '{{ index .Labels "uwcs.fng.commit" }}' 2>/dev/null)
 
-    if [[ -n "$remote_hash" && "$local_hash" != "$remote_hash" ]]; then
+    if [[ -n "$remote_hash" && "$airport_hash" != "$remote_hash" ]]; then
+        # re concurrency, only one at a time will succeed here hence lock
         if mkdir "$(pwd)/gitup.lock" 2>/dev/null; then
+            # if script dies then trap cleans up so no infinite loop on next run
             trap 'rm -rf "$(pwd)/gitup.lock" 2>/dev/null' EXIT
 
             git fetch origin >/dev/null 2>&1
             git reset --hard
+
+            # checkout specific hash corresponding to img build
             git checkout "$remote_hash"
+
+            # mod to add force-override for e.g. storage.conf changes?
+            ./install.sh
 
             rm -rf "$(pwd)/gitup.lock" 2>/dev/null
             trap - EXIT
 
+            # replace execution environment with self - or rather, *updated* self. ie so proc can survive xsession change
             exec bash "$0" "$@"
         else
             echo "Waiting for gitup.lock to be released before script restart"
             while [[ -d "$(pwd)/gitup.lock" ]]; do
                 sleep 2
             done
+
+            # restart on followers too
             exec bash "$0" "$@"
         fi
     fi
@@ -82,9 +102,11 @@ else
     airport_digest=$(skopeo inspect "$airport_image" --format "{{.Digest}}" 2>/dev/null)
     local_digest=$(skopeo inspect "$local_image" --format "{{.Digest}}" 2>/dev/null)
 
+    # we only need to pull an updated image from GHCR if we don't have the updated image on the NFS already
     if [[ -n "$remote_digest" && "$remote_digest" == "$airport_digest" && ! -d "$(pwd)/update.lock" ]]; then
         echo "NFS image same as remote, skipping download"
     else
+        # same idea here, one PC holds a "lock" whilst pulling updated image
         if mkdir "$(pwd)/update.lock" 2>/dev/null; then
             trap 'rm -rf "$(pwd)/update.lock" 2>/dev/null' EXIT
 
@@ -108,12 +130,19 @@ else
 
     airport_digest=$(skopeo inspect "$airport_image" --format "{{.Digest}}" 2>/dev/null)
 
+    # don't need to pull NFS --> local if updated image already present locally
+    # (ie expectation is that updated GHCR image flow will initially take up to a couple of mins, but subsequently would be ~5 seconds for each target mch with the img present locally already)
     if [[ -n "$airport_digest" && "$local_digest" == "$airport_digest" ]]; then
         echo "Local image same as NFS image, skipping pull..."
     else
         echo "Updated image on NFS, pulling locally..."
         podman unshare skopeo copy "$airport_image" "$local_image"
     fi
+fi
+
+## todo: figure out auto-updating cdi if e.g. drivers get updated - pref don't want to regenerate every time
+if [[ ! -f "$(pwd)/host/cdi.yaml" ]]; then
+    ./genicd.sh
 fi
 
 # --hostname implies private UTS namespace
