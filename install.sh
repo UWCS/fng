@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: Update for Wayland setup
+
 if [ -f ~/.config/containers/storage.conf ]; then
     echo "Skipped: ~/.config/containers/storage.conf already exists"
 else

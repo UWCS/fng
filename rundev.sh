@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# TODO: Update to use e.g. Weston
+
 # Redirect output to a log file and to the console
 exec > >(tee -i -a $(hostname)-$(id -u)-xsession.log) 2>&1
 
