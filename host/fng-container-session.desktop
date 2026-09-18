@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=FNG Container
+Comment=Launch FNG Container
+Exec=/usr/bin/wayland-userscript

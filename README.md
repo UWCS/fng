@@ -4,6 +4,8 @@ An isolated Podman container running CachyOS for running games on the CS0.03 PCs
 
 > Project currently maintained primarily by @raven0034
 
+Note: Guide does not yet apply fully for Wayland
+
 *Note: User data e.g. logins, downloads, game save data etc, from usage of the container do not get stored post-logout, and is designed to be as isolated as reasonably possible from the host.*
 
 You can set this up yourself for usage on your own account/machine - see the #environment section for more detailed technical information.

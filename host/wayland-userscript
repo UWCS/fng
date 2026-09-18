@@ -1,0 +1,8 @@
+#!/bin/bash
+## this script should live at /usr/bin/wayland-userscript
+## SELinux sometimes plays havoc with other locations, and sometimes with attrs being missing (DCS doesn't use SELinux atm however)
+## can bypass for direct execution from the .desktop but partly point of this was to experiment round with a generic replacement to the X11-based Userscript option on target mchs currently
+
+set -e
+
+exec $FNG_PATH/host/session.sh

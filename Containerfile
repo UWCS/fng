@@ -12,14 +12,20 @@ COPY --chown=root:root ./home/pacman.conf /etc/pacman.conf
 # default ocl-icd is missing symbols, opencl-icd-loader fixes this
     # available in cachy repos, aur on vanilla arch
     # --ask=4 corresponds to ALPM_QUESTION_CONFLICT_PKG i.e. answer Y not N to opencl-icd-loader replacing ocl-icd
-RUN pacman-key --init && \
-    pacman-key --populate \
-        archlinux cachyos && \
-    pacman -Syu --noconfirm \
+# mitigate weird edge case of conflicting sigs on update
+# temporarily don't care about sigs for long enough to pull actual ones
+RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
+    sed -i 's/^SigLevel.*/SigLevel = Never/g' /etc/pacman.conf && \
+    pacman -Sy --noconfirm archlinux-keyring cachyos-keyring && \
+    mv /etc/pacman.conf.bak /etc/pacman.conf && \
+    pacman-key --init && \
+    pacman-key --populate archlinux cachyos && \
+    pacman -Syyu --noconfirm \
         base-devel wget git less nano htop \
         noto-fonts-cjk xorg-fonts-misc \
         vlc vlc-plugins-all ffmpeg \
-        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
+        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin \
+        qt6-wayland waycheck xcb-util-cursor \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
         flatpak steam lutris protontricks spectacle \

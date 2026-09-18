@@ -9,7 +9,7 @@ User=fng
 WorkingDirectory=/home/fng
 EnvironmentFile=/etc/environment
 PAMName=login
-ExecStart=/bin/bash -lc "startplasma-x11; sudo systemctl poweroff"
+ExecStart=/bin/bash -lc 'unset WAYLAND_DISPLAY DISPLAY; exec env XDG_SESSION_ID="$HOST_XDG_SESSION_ID" XDG_RUNTIME_DIR=/run/user/1000 DBUS_SYSTEM_BUS_ADDRESS=unix:path=/mnt/host_sockets/fng/login1-bus DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus startplasma-wayland; sudo systemctl poweroff'
 
 [Install]
 WantedBy=default.target
