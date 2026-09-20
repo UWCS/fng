@@ -19,7 +19,7 @@ RUN pacman-key --init && \
         base-devel wget git less nano htop \
         noto-fonts-cjk xorg-fonts-misc \
         vlc vlc-plugins-all ffmpeg \
-        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 \
+        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 lib32-mesa-demos \
         pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
         firefox discover konsole dolphin kate \
         flatpak steam lutris protontricks spectacle \
