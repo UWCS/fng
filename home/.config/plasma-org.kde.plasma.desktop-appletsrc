@@ -72,6 +72,9 @@ knownItems=org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasm
 [Containments][2][Applets][6]
 plugin=org.kde.plasma.digitalclock
 
+[Containments][2][Applets][6][Configuration][Appearance]
+dateDisplayFormat=BelowTime
+
 [Containments][2][Applets][7]
 plugin=org.kde.plasma.showdesktop
 
