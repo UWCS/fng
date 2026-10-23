@@ -18,16 +18,22 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
     sed -i 's/^SigLevel.*/SigLevel = Never/g' /etc/pacman.conf && \
     pacman -Sy --noconfirm archlinux-keyring cachyos-keyring && \
     mv /etc/pacman.conf.bak /etc/pacman.conf && \
+    curl -O https://sonicde-arch.github.io/sonicde-archlinux.asc && \
+    pacman-key --add sonicde-archlinux.asc && \
+    pacman-key --finger 3B87898C73F11DF5 && \
+    pacman-key --lsign-key 3B87898C73F11DF5 && \
     pacman-key --init && \
     pacman-key --populate archlinux cachyos && \
-    pacman -Syu --noconfirm \
-        base-devel wget git less nano htop \
-        noto-fonts-cjk xorg-fonts-misc \
-        vlc vlc-plugins-all ffmpeg \
-        plasma-desktop xdg-desktop-portal-kde vulkan-tools kwin-x11 lib32-mesa-demos \
-        pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
-        firefox discover konsole dolphin kate \
-        flatpak steam lutris protontricks spectacle \
+    pacman -Syyu --noconfirm \
+        downgrade base-devel wget git less nano htop \
+        sonic-desktop-interface xdg-desktop-portal-sonicde \
+        sonic-win sonic-screenies sonic-breeze \
+        noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
+        vlc vlc-plugins-all ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
+        vulkan-tools lib32-mesa-demos \
+        sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
+        firefox discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
+        flatpak steam lutris protontricks proton-cachyos-slr \
         prismlauncher jre21-openjdk && \
     pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
