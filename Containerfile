@@ -14,8 +14,6 @@ COPY --chown=root:root ./home/pacman.conf /etc/pacman.conf
     # --ask=4 corresponds to ALPM_QUESTION_CONFLICT_PKG i.e. answer Y not N to opencl-icd-loader replacing ocl-icd
 # mitigate weird edge case of conflicting sigs on update
 # temporarily don't care about sigs for long enough to pull actual ones
-# yes yes dirty ALA hack, fight me - sonic hasn't updated to 6.7.5 --> 6.8 yet so need to avoid ABI mismatch for the remaining pkgs they depend on
-# breeze-cursors thing is an upstream bug (sonic-breeze should specify it "provides" breeze-cursors, not just conflict)
 RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
     sed -i 's/^SigLevel.*/SigLevel = Never/g' /etc/pacman.conf && \
     pacman -Sy --noconfirm archlinux-keyring cachyos-keyring && \
@@ -26,18 +24,17 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
     pacman-key --lsign-key 3B87898C73F11DF5 && \
     pacman-key --init && \
     pacman-key --populate archlinux cachyos && \
-    pacman -Syyu --noconfirm --assume-installed=breeze-cursors \
+    pacman -Syyu --noconfirm \
         downgrade base-devel wget git less nano htop \
         sonic-desktop-interface xdg-desktop-portal-sonicde \
-        sonic-win sonic-pipewire sonic-screenies sonic-breeze \
-        noto-fonts-cjk xorg-fonts-misc \
-        vlc vlc-plugins-all ffmpeg \
+        sonic-win sonic-screenies sonic-breeze \
+        noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
+        vlc vlc-plugins-all ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
         vulkan-tools lib32-mesa-demos \
-        pipewire pipewire-pulse pipewire-alsa plasma-pa kde-gtk-config \
-        firefox discover konsole dolphin kate \
-        flatpak steam lutris protontricks \
+        sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
+        firefox discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
+        flatpak steam lutris protontricks proton-cachyos-slr \
         prismlauncher jre21-openjdk && \
-    yes | downgrade $(pacman -Qgq plasma | sed 's/$/=6.7.5-1/') --ala-only && \
     pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
         cargo install dcspkg --root /usr && \

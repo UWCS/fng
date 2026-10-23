@@ -16,7 +16,7 @@ echo "Build complete. Compressing..."
 # up to -7 saves about 200mb, seems to be negligible after that. may adjust after further benchmarking
 # current expectation is initial start for a given target machine, decompressing off the nfs into skopeo will take ~15s
 # container startup post-pull is <10s
-podman save localhost/fng:dev | zstd -T0 -3 > ./fng-dev.tar.zst
+podman save localhost/fng:dev | zstd -T0 -11 > ./fng-dev.tar.zst
 
 ./genicd.sh
 
