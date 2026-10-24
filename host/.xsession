@@ -215,6 +215,7 @@ podman run --rm \
     --security-opt unmask=ALL \
     --cdi-spec-dir=./host \
     --device nvidia.com/gpu=all \
+    --device /dev/snd \
     --tz="Europe/London" \
     --env "DISPLAY=$DISPLAY" \
     --env "LANG=en_GB.UTF-8" \
