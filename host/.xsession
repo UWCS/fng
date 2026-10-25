@@ -226,7 +226,8 @@ podman run --rm \
     --env "__GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1" \
     --env "XDG_SESSION_TYPE=x11" \
     --env "XDG_RUNTIME_DIR=/run/user/1000" \
-    --env "PULSE_SERVER=unix:/run/user/1000/pulse/native" \
+    --env "PULSE_SERVER=unix:/mnt/host_sockets/pulse/native" \
+    --env "PIPEWIRE_RUNTIME_DIR=/mnt/host_sockets" \
     --env "XAUTHORITY=/tmp/.Xauthority" \
     --hooks-dir="$(pwd)/garb" \
     --mount type=devpts,target=/dev/pts \
@@ -237,8 +238,8 @@ podman run --rm \
     --volume /etc/hosts:/etc/hosts:ro \
     --volume /etc/resolv.conf:/etc/resolv.conf:ro \
     --volume "/tmp/.X11-unix:/tmp/.X11-unix:ro" \
-    --volume "$XDG_RUNTIME_DIR/pipewire-0:/run/user/1000/pipewire-0" \
-    --volume "$XDG_RUNTIME_DIR/pulse:/run/user/1000/pulse" \
+    --volume "$XDG_RUNTIME_DIR/pipewire-0:/mnt/host_sockets/pipewire-0:ro" \
+    --volume "$XDG_RUNTIME_DIR/pulse:/mnt/host_sockets/pulse:ro" \
     --volume "$XAUTHORITY:/tmp/.Xauthority" \
     --userns keep-id:uid=1000,gid=1000 \
     --group-add keep-groups \
