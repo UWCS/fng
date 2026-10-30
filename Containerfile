@@ -84,11 +84,18 @@ COPY --chown=root:polkitd --chmod=0640 host/99-fng-polkit.rules /etc/polkit-1/ru
 COPY --chown=root:root --chmod=0644 host/startsession.service /etc/systemd/system/startsession.service
 RUN systemctl enable startsession.service
 
+COPY --chown=root:root --chmod=0644 home/.config/plasma-taskbar.js /usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/fng-taskbar.js
+
 # copy pre-config'd home dir and make our user the owner of it
 USER fng
 WORKDIR /home/fng
 COPY --chown=fng:fng home ./
-RUN flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+RUN flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo && \
+    for app in org.kde.dolphin steam librewolf net.lutris.Lutris org.prismlauncher.PrismLauncher org.kde.konsole; do \
+        install -m 0755 -o fng -g fng \
+            "/usr/share/applications/${app}.desktop" \
+            "/home/fng/Desktop/${app}.desktop"; \
+    done
 
 # ideally sort ci out for this as well
 RUN git clone --depth=1 https://github.com/UWCS/dcslauncher.git
