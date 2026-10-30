@@ -144,8 +144,11 @@ else
     fi
 fi
 
-## todo: figure out auto-updating cdi if e.g. drivers get updated - pref don't want to regenerate every time
-if [[ ! -f "$(pwd)/host/cdi.yaml" ]]; then
+## if condition is met either no CDI spec or drivers got quietly updated again
+## e.g. if driver version is 595.99.02, correct CDI spec will have .so.595.99.02 entries
+## lack of matches --> version mismatch --> regen
+if [[ ! -f "$(pwd)/host/cdi.yaml" ]] || ! grep -Fq -- "$(cat /sys/module/nvidia/version)" host/cdi.yaml; then
+    echo "Regenerating CDI spec"
     ./genicd.sh
 fi
 
