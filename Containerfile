@@ -32,7 +32,7 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
         vlc vlc-plugins-all ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
         vulkan-tools lib32-mesa-demos \
         sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
-        firefox discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
+        librewolf discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
         flatpak steam lutris protontricks proton-cachyos-slr \
         prismlauncher jre21-openjdk && \
     pacman -S --ask=4 opencl-icd-loader && \
