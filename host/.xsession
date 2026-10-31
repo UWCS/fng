@@ -19,6 +19,11 @@ podman rm -f arch
 # overlayfs storage for container (see storage.conf)
 mkdir -p "/var/tmp/$USER"
 
+HOST_XDG_SESSION_ID="$XDG_SESSION_ID"
+PROXY_DIR="$XDG_RUNTIME_DIR/fng"
+
+mkdir -p $PROXY_DIR
+
 #DEV=1
 
 if [ -n "$DEV" ]; then
@@ -152,6 +157,10 @@ if [[ ! -f "$(pwd)/host/cdi.yaml" ]] || ! grep -Fq -- "$(cat /sys/module/nvidia/
     ./genicd.sh
 fi
 
+## if not present, pull fng-disks down - pref CI & versioning in future
+## intended usage means fng-disks won't present initially on host - trying to avoid submoduling atm
+./get-fng-disks.sh
+
 # --hostname implies private UTS namespace
 # cap sys_admin currently currently exists so fuse mount will work (despite migrating to overlay, fuse is still used inside the container by e.g. xdg-document-portal)
 # --systemd=always enforces systemd usage. /sbin/init is the entry point, /tmp/en as a hack for easily preserving set env vars
@@ -232,6 +241,8 @@ podman run --rm \
     --env "PULSE_SERVER=unix:/mnt/host_sockets/pulse/native" \
     --env "PIPEWIRE_RUNTIME_DIR=/mnt/host_sockets" \
     --env "XAUTHORITY=/tmp/.Xauthority" \
+    --env "HOST_XDG_SESSION_ID=$HOST_XDG_SESSION_ID" \
+    --volume "$PROXY_DIR:/mnt/host_sockets/fng" \
     --hooks-dir="$(pwd)/garb" \
     --mount type=devpts,target=/dev/pts \
     --volume /dev:/dev:rslave \
@@ -239,6 +250,7 @@ podman run --rm \
     --volume /run/udev:/run/udev:rslave \
     --volume /etc/machine-id:/etc/machine-id:ro \
     --volume /etc/hosts:/etc/hosts:ro \
+    --volume "$(pwd)/fng-disks/bin/fng-disks:/usr/bin/fng-disks" \
     --volume /etc/resolv.conf:/etc/resolv.conf:ro \
     --volume "/tmp/.X11-unix:/tmp/.X11-unix:ro" \
     --volume "$XDG_RUNTIME_DIR/pipewire-0:/mnt/host_sockets/pipewire-0:ro" \
@@ -248,4 +260,34 @@ podman run --rm \
     --group-add keep-groups \
     --entrypoint /bin/bash \
     $image \
-    -c "env > /etc/environment && exec /sbin/init"
+    -c "env > /etc/environment && exec /sbin/init" &
+
+podman_pid=$!
+
+while [ "$(podman inspect -f '{{.State.Running}}' arch 2>/dev/null)" != "true" ]; do
+    if ! kill -0 "$podman_pid" 2>/dev/null; then
+        wait "$podman_pid"
+        exit $?
+    fi
+    sleep 0.5
+done
+
+CONTAINER_PID="$(podman inspect -f '{{.State.Pid}}' arch)" || exit 1
+if [ "$CONTAINER_PID" -le 0 ]; then
+    echo "container arch is not running" >&2
+    exit 1
+fi
+
+{
+    echo
+    echo "===== removable-bridge start $(date --iso-8601=seconds) ====="
+} >>"./fng-disks/removable-bridge.log"
+
+./fng-disks/bin/removable-bridge "$CONTAINER_PID" /run/media/fng "$(pwd)/fng-disks/bin/mountinject" "$PROXY_DIR/removable.sock" >>"./fng-disks/removable-bridge.log" --no-automount 2>&1 &
+removable_bridge_pid=$!
+
+wait "$podman_pid"
+rc=$?
+kill "$removable_bridge_pid" 2>/dev/null || true
+wait "$removable_bridge_pid" 2>/dev/null || true
+exit "$rc"

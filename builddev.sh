@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# rebuild
+if [ -d ./fng-disks ]; then
+    rm -rf ./fng-disks
+fi
+
+./get-fng-disks.sh
+
 # build image and tag, squashing layers down to a unified layer to reduce redundancy
 podman build -t localhost/fng:dev . --no-cache --squash-all
 

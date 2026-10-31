@@ -74,11 +74,15 @@ RUN useradd -u 1000 -m -s /bin/bash fng && \
             systemd-networkd-resolve-hook.socket systemd-networkd-varlink-metrics.socket \
             systemd-networkd-varlink.socket systemd-networkd.socket systemd-nsresourced.service \
             systemd-nsresourced.socket systemd-machine-id-commit.service \
-            polkit-agent-helper.socket && \
+            polkit-agent-helper.socket udisks2.service && \
         chmod u+s /usr/lib/polkit-1/polkit-agent-helper-1
 
 # copy default polkit auto-allow rules. note for kernel <6.12 suid agent must be used
 COPY --chown=root:polkitd --chmod=0640 host/99-fng-polkit.rules /etc/polkit-1/rules.d/99-fng-polkit.rules
+
+COPY --chown=root:root --chmod=0644 host/org.fng.UDisks2.conf /etc/dbus-1/system.d/org.fng.UDisks2.conf
+COPY --chown=root:root --chmod=0644 host/fng-disks.service /etc/systemd/system/fng-disks.service
+RUN systemctl enable fng-disks.service
 
 # copy systemd service that will handle login
 COPY --chown=root:root --chmod=0644 host/startsession.service /etc/systemd/system/startsession.service

@@ -1,0 +1,14 @@
+[Unit]
+Description=fng-disks
+After=dbus.service
+Requires=dbus.service
+
+[Service]
+Type=simple
+User=fng
+ExecStart=/usr/bin/fng-disks /mnt/host_sockets/fng/removable.sock
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
