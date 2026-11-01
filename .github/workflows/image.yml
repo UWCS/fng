@@ -11,6 +11,11 @@ jobs:
         packages: write
 
     steps:
+      - name: Clean-up runner
+        uses: mathio/gha-cleanup@v1
+        with:
+          remove-browsers: true
+
       - name: Checkout code
         uses: actions/checkout@v7
         with:
@@ -51,4 +56,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           extra-args: |
             --compression-format=zstd
-            --compression-level=7
+            --compression-level=15
