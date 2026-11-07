@@ -30,7 +30,7 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
         sonic-win sonic-screenies sonic-breeze \
         noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
         vlc vlc-plugins-all ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
-        vulkan-tools lib32-mesa-demos \
+        vulkan-tools lib32-vulkan-icd-loader lib32-mesa-demos lib32-mesa-utils \
         sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
         librewolf discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
         flatpak steam lutris protontricks proton-cachyos-slr \
