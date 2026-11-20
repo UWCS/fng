@@ -17,4 +17,6 @@ fi
 
 ./genicd.sh
 
+./get-fng-disks.sh
+
 echo "Done"
