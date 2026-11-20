@@ -5,6 +5,8 @@ FROM docker.io/cachyos/cachyos-v3:latest AS arch
 # make sure root in container owns it
 COPY --chown=root:root ./home/pacman.conf /etc/pacman.conf
 
+COPY --chown=nobody:nobody ./host/ntsync-stub /tmp/ntsync-stub
+
 # make sure pacman can check against cachy signed packages
 # arch as failsafe in case someone wanting to install non-cachy-recompiled packages
 # target machines are x86_64-v3 so use v3 mirrorlist
@@ -25,8 +27,12 @@ RUN sed -i '/^Server.*cdn77\.cachyos\.org/s/^/#/' /etc/pacman.d/cachyos*mirrorli
     pacman-key --lsign-key 3B87898C73F11DF5 && \
     pacman-key --init && \
     pacman-key --populate archlinux cachyos && \
-    pacman -Syyu --noconfirm \
-        base-devel wget git less nano htop \
+    pacman -Syyu --noconfirm base-devel && \
+        cd /tmp/ntsync-stub && \
+        runuser -u nobody -- env HOME=/tmp/ntsync-stub makepkg --noconfirm && \
+        pacman -U --noconfirm ntsync-stub-*.pkg.tar.zst && \
+        cd && rm -rf /tmp/ntsync-stub && \
+    pacman -Syyu --noconfirm wget git less nano htop \
         sonic-desktop-interface xdg-desktop-portal-sonicde \
         sonic-win sonic-screenies sonic-breeze \
         noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
