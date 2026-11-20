@@ -14,7 +14,8 @@ COPY --chown=root:root ./home/pacman.conf /etc/pacman.conf
     # --ask=4 corresponds to ALPM_QUESTION_CONFLICT_PKG i.e. answer Y not N to opencl-icd-loader replacing ocl-icd
 # mitigate weird edge case of conflicting sigs on update
 # temporarily don't care about sigs for long enough to pull actual ones
-RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
+RUN sed -i '/^Server.*cdn77\.cachyos\.org/s/^/#/' /etc/pacman.d/cachyos*mirrorlist && \
+    cp /etc/pacman.conf /etc/pacman.conf.bak && \
     sed -i 's/^SigLevel.*/SigLevel = Never/g' /etc/pacman.conf && \
     pacman -Sy --noconfirm archlinux-keyring cachyos-keyring && \
     mv /etc/pacman.conf.bak /etc/pacman.conf && \
