@@ -25,7 +25,7 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
     pacman-key --init && \
     pacman-key --populate archlinux cachyos && \
     pacman -Syyu --noconfirm \
-        downgrade base-devel wget git less nano htop \
+        base-devel wget git less nano htop \
         sonic-desktop-interface xdg-desktop-portal-sonicde \
         sonic-win sonic-screenies sonic-breeze \
         noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
@@ -34,7 +34,7 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
         sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
         librewolf discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
         flatpak steam lutris protontricks proton-cachyos-slr \
-        prismlauncher jre21-openjdk && \
+        prismlauncher && \
     pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
         cargo install dcspkg --root /usr && \
