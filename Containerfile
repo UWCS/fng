@@ -35,8 +35,8 @@ RUN sed -i '/^Server.*cdn77\.cachyos\.org/s/^/#/' /etc/pacman.d/cachyos*mirrorli
     pacman -Syyu --noconfirm wget git less nano htop \
         sonic-desktop-interface xdg-desktop-portal-sonicde \
         sonic-win sonic-screenies sonic-breeze \
-        noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
-        vlc vlc-plugins-all ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
+        ttf-dejavu noto-fonts-cjk xorg-fonts-misc xorg-setxkbmap \
+        haruna ffmpeg ffmpegthumbs kdegraphics-thumbnailers \
         vulkan-tools lib32-vulkan-icd-loader lib32-mesa-demos lib32-mesa-utils \
         sonic-pipewire pipewire-pulse pipewire-alsa sonic-audio-applet-pulse sonic-gtk-theme-bridge \
         librewolf discover sonic-terminal sonic-ecco dolphin-plugins kdf kate kompare \
