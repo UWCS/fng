@@ -37,7 +37,7 @@ RUN cp /etc/pacman.conf /etc/pacman.conf.bak && \
         prismlauncher && \
     pacman -S --ask=4 opencl-icd-loader && \
     pacman -S --noconfirm rust && \
-        cargo install dcspkg --root /usr && \
+        cargo install --locked --git https://github.com/UWCS/dcspkg.git --branch main dcspkg --root /usr && \
         pacman -Rns --noconfirm rust
 
 # clear out dirs with redundant files
