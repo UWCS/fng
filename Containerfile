@@ -95,7 +95,7 @@ RUN systemctl enable fng-disks.service
 COPY --chown=root:root --chmod=0644 host/startsession.service /etc/systemd/system/startsession.service
 RUN systemctl enable startsession.service
 
-COPY --chown=root:root --chmod=0644 home/.config/plasma-taskbar.js /usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/fng-taskbar.js
+COPY --chown=root:root --chmod=0644 home/.config/sonic-taskbar.js /usr/share/plasma/shells/org.sonicde.desktop/contents/updates/fng-taskbar.js
 
 # copy pre-config'd home dir and make our user the owner of it
 USER fng

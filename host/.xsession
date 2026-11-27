@@ -476,7 +476,7 @@ CONTAINER_PID="$(podman inspect -f '{{.State.Pid}}' arch)" || fail "$?" "Unable 
 removable_bridge_pid=$!
 
 # check x11 display rather than treating running as ready. only best effort heuristic
-plasma_desktop_ready() {
+desktop_ready() {
     local wid
     for wid in $(LC_ALL=C xprop -root _NET_CLIENT_LIST | grep -oE '0x[[:xdigit:]]+'); do
         if LC_ALL=C xprop -id "$wid" _NET_WM_WINDOW_TYPE 2>/dev/null | grep -q '_NET_WM_WINDOW_TYPE_DESKTOP' && LC_ALL=C xwininfo -id "$wid" 2>/dev/null | grep -q 'Map State: IsViewable'; then
@@ -507,7 +507,7 @@ wait_for_desktop() {
     fi
     status busy "Preparing desktop..."
     while kill -0 "$podman_pid" 2>/dev/null; do
-        if plasma_desktop_ready; then
+        if desktop_ready; then
             echo "Splash: mapped Plasma desktop detected"
             status ready "Ready" ""
             return
