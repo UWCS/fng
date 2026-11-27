@@ -477,11 +477,9 @@ removable_bridge_pid=$!
 
 # check x11 display rather than treating running as ready. only best effort heuristic
 plasma_desktop_ready() {
-    local clients wid props
-    clients=$(LC_ALL=C xprop -root _NET_CLIENT_LIST 2>/dev/null) || return 1
-    for wid in $(grep -oE '0x[[:xdigit:]]+' <<< "$clients"); do
-        props=$(LC_ALL=C xprop -id "$wid" WM_CLASS _NET_WM_WINDOW_TYPE 2>/dev/null) || continue
-        if [[ "$props" == *plasmashell* && "$props" == *_NET_WM_WINDOW_TYPE_DESKTOP* ]] && LC_ALL=C xwininfo -id "$wid" 2>/dev/null | grep -q 'Map State: IsViewable'; then
+    local wid
+    for wid in $(LC_ALL=C xprop -root _NET_CLIENT_LIST | grep -oE '0x[[:xdigit:]]+'); do
+        if LC_ALL=C xprop -id "$wid" _NET_WM_WINDOW_TYPE 2>/dev/null | grep -q '_NET_WM_WINDOW_TYPE_DESKTOP' && LC_ALL=C xwininfo -id "$wid" 2>/dev/null | grep -q 'Map State: IsViewable'; then
             return 0
         fi
     done
