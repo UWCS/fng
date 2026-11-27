@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.22"/>
+  <object class="GtkWindow" id="window">
+    <property name="name">splash_window</property>
+    <property name="title">FNG session startup</property>
+    <property name="default-width">800</property>
+    <property name="default-height">500</property>
+    <child>
+      <object class="GtkOverlay" id="background_overlay">
+        <child>
+          <object class="GtkDrawingArea" id="background">
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+          </object>
+        </child>
+        <child type="overlay">
+      <object class="GtkBox">
+        <property name="halign">fill</property>
+        <property name="valign">fill</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
+        <property name="margin">24</property>
+        <child>
+          <object class="GtkStack" id="stack">
+            <property name="transition-type">none</property>
+            <child>
+              <object class="GtkBox" id="splash_page">
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <property name="valign">center</property>
+                <property name="halign">center</property>
+                <child>
+                  <object class="GtkDrawingArea" id="animation">
+                    <property name="width-request">160</property>
+                    <property name="height-request">140</property>
+                  </object>
+                </child>
+                <child><object class="GtkLabel" id="title"><property name="name">splash_title</property></object></child>
+                <child><object class="GtkLabel" id="message"><property name="name">status_message</property><property name="wrap">True</property><property name="justify">center</property><property name="max-width-chars">65</property><property name="margin-top">14</property></object></child>
+                <child><object class="GtkDrawingArea" id="progress"><property name="name">progress</property><property name="width-request">300</property><property name="height-request">8</property><property name="halign">center</property></object></child>
+                <child><object class="GtkLabel" id="detail"><property name="name">status_detail</property><property name="wrap">True</property><property name="justify">center</property><property name="max-width-chars">65</property></object></child>
+                <child><object class="GtkLabel" id="subtitle"><property name="name">splash_subtitle</property><property name="margin-top">18</property></object></child>
+              </object>
+              <packing><property name="name">splash</property></packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="verbose_page">
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <child><object class="GtkLabel" id="log_heading"><property name="name">log_heading</property><property name="label">FNG startup diagnostics</property><property name="xalign">0</property></object></child>
+                <child><object class="GtkLabel" id="log_status"><property name="name">log_status</property><property name="xalign">0</property><property name="wrap">True</property></object></child>
+                <child>
+                  <object class="GtkScrolledWindow" id="log_scroll">
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="shadow-type">in</property>
+                    <child><object class="GtkTextView" id="log_view"><property name="name">log_view</property><property name="editable">False</property><property name="cursor-visible">False</property><property name="wrap-mode">word-char</property><property name="left-margin">12</property><property name="right-margin">12</property><property name="top-margin">12</property><property name="bottom-margin">12</property></object></child>
+                  </object>
+                </child>
+                <child><object class="GtkCheckButton" id="follow"><property name="label">Follow output</property><property name="active">True</property><property name="halign">start</property></object></child>
+              </object>
+              <packing><property name="name">verbose</property></packing>
+            </child>
+          </object>
+          <packing><property name="expand">True</property><property name="fill">True</property></packing>
+        </child>
+        <child><object class="GtkButton" id="dismiss"><property name="name">dismiss</property><property name="label">Dismiss</property><property name="halign">center</property></object></child>
+        <child><object class="GtkLabel" id="hint"><property name="name">hint</property></object></child>
+        <child><object class="GtkLabel" id="footer"><property name="name">footer</property><property name="wrap">True</property><property name="justify">center</property></object></child>
+      </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
