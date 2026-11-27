@@ -1,5 +1,5 @@
 [Unit]
-Description=Start Plasma
+Description=Start Sonic
 Wants=dbus.socket systemd-logind.service
 After=dbus.socket
 
